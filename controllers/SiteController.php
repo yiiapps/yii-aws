@@ -2,13 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\CreatedirForm;
+use app\models\LogCreatedir;
+use app\models\LoginForm;
 use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 
 class SiteController extends Controller
 {
@@ -61,7 +62,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $s3 = Yii::$app->get('s3');
+        $result = $s3->list('test/');
+        var_dump($result->get('Contents'));exit;
+        // return $result->toArray();
+        // return $this->render('index');
     }
 
     /**
@@ -103,15 +108,16 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionContact()
+    public function actionCreatedir()
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
+        $model = new CreatedirForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $logCreatedirModel = new LogCreatedir();
+            $logCreatedirModel->dirname = $model->name;
+            return $logCreatedirModel->save();
+            // return $model->dirname;
         }
-        return $this->render('contact', [
+        return $this->render('createdir', [
             'model' => $model,
         ]);
     }
@@ -121,8 +127,16 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionAbout()
+    public function actionUpload()
     {
-        return $this->render('about');
+
+        //
+
+        // $result = $s3->upload('test/test.txt', '/work/d/phpapps/yii-aws/test.txt');
+
+        // $result = $s3->put('test/test1.txt', 'body');
+
+        // var_dump($result);exit;
+        return $this->render('upload');
     }
 }

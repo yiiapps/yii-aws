@@ -9,8 +9,9 @@ $config = [
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
+    'name' => '静态文件管理',
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -43,14 +44,22 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
+        's3' => [
+            'class' => 'frostealth\yii2\aws\s3\Service',
+            'credentials' => [ // Aws\Credentials\CredentialsInterface|array|callable
+                'key' => 'AKIAOFNRM6QC6WI3JNKQ',
+                'secret' => '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',
+            ],
+            'region' => 'cn-north-1',
+            'defaultBucket' => 'tiensmalltest',
+            'defaultAcl' => 'public-read',
+        ],
     ],
     'params' => $params,
 ];
