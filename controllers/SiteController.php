@@ -102,26 +102,30 @@ class SiteController extends Controller
         $getDirname = $request->get('dirname', '');
         if ($request->isPost) {
             $dirname = $request->post('name');
-            if ($getDirname) {
-                $dirname = $getDirname . '/' . $dirname;
-            }
-            $count = LogCreatedir::find()->where(['dirname' => $dirname])->count();
-            if ($count > 0) {
-                $msg = '目录已存在';
+            if (empty($dirname) || !$this->valiName($dirname)) {
+                $msg = '名字不合法';
             } else {
-                $s3 = Yii::$app->get('s3');
-                $filename = $dirname . '/index.html';
-                $exist = $s3->exist($dirname . '/');
-                if ($exist) {
-                    $msg = '目录被占用';
+                if ($getDirname) {
+                    $dirname = $getDirname . '/' . $dirname;
+                }
+                $count = LogCreatedir::find()->where(['dirname' => $dirname])->count();
+                if ($count > 0) {
+                    $msg = '目录已存在';
                 } else {
-                    $result = $s3->put($filename, '为了创建目录, 建立的空文件');
+                    $s3 = Yii::$app->get('s3');
+                    $filename = $dirname . '/index.html';
+                    $exist = $s3->exist($dirname . '/');
+                    if ($exist) {
+                        $msg = '目录被占用';
+                    } else {
+                        $result = $s3->put($filename, '为了创建目录, 建立的空文件');
 
-                    $logCreatedirModel = new LogCreatedir();
-                    $logCreatedirModel->dirname = $dirname;
-                    $logCreatedirModel->save();
+                        $logCreatedirModel = new LogCreatedir();
+                        $logCreatedirModel->dirname = $dirname;
+                        $logCreatedirModel->save();
 
-                    $msg = '创建成功';
+                        $msg = '创建成功';
+                    }
                 }
             }
         }
@@ -141,21 +145,34 @@ class SiteController extends Controller
         $msg = '';
         $getDirname = Yii::$app->request->get('dirname', '');
         if (Yii::$app->request->isPost) {
-            $s3 = Yii::$app->get('s3');
-            $filename = $getDirname . '/' . $_FILES['file']['name'];
-            $result = $s3->upload($filename, $_FILES['file']['tmp_name']);
+            if (empty($_FILES['file']['name']) || !$this->valiName($_FILES['file']['name'])) {
+                $msg = '名字不合法';
+            } else {
+                $s3 = Yii::$app->get('s3');
+                $filename = $getDirname . '/' . $_FILES['file']['name'];
+                $result = $s3->upload($filename, $_FILES['file']['tmp_name']);
 
-            $modelLogUploadfile = new \app\models\LogUploadfile();
-            $modelLogUploadfile->filename = $_FILES['file']['name'];
-            $modelLogUploadfile->dirname = $getDirname;
-            $modelLogUploadfile->url = $result->get('ObjectURL');
-            $modelLogUploadfile->save();
-            $msg = '添加成功';
+                $modelLogUploadfile = new \app\models\LogUploadfile();
+                $modelLogUploadfile->filename = $_FILES['file']['name'];
+                $modelLogUploadfile->dirname = $getDirname;
+                $modelLogUploadfile->url = $result->get('ObjectURL');
+                $modelLogUploadfile->save();
+                $msg = '添加成功';
+            }
         }
 
         $logs = LogUploadfile::findAll(['dirname' => $getDirname]);
         return $this->render('showfiles', [
             'logs' => $logs, 'msg' => $msg,
         ]);
+    }
+
+    private function valiName($name)
+    {
+        if (preg_match('/^[a-zA-Z0-9\.\-_]+$/', $name, $matches)) {
+            return true; //name合法
+        } else {
+            return false; //name 不合法
+        }
     }
 }
