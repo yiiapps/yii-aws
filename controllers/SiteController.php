@@ -57,20 +57,6 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-    public function actionIndex()
-    {
-        $s3 = Yii::$app->get('s3');
-        $result = $s3->list('test/');
-        var_dump($result->get('Contents'));exit;
-        // return $result->toArray();
-        // return $this->render('index');
-    }
-
-    /**
      * Login action.
      *
      * @return Response|string
@@ -109,7 +95,7 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionCreatedir()
+    public function actionIndex()
     {
         $msg = '';
         $request = \Yii::$app->request;

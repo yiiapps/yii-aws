@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </form>
         </div>
    </div>
-    <table>
+    <table border="1">
         <?php foreach ($logs as $key => $log) {?>
         <tr>
             <td width="300"><?=$log->dirname;?></td>

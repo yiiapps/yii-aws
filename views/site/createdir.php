@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-lg-5">
             <div><?=$msg;?></div>
-            <form method="POST" action="<?php echo Url::to(['site/createdir', 'dirname' => \Yii::$app->request->get('dirname', '')]); ?>">
+            <form method="POST" action="<?php echo Url::to(['site/index', 'dirname' => \Yii::$app->request->get('dirname', '')]); ?>">
                 <div class="form-group">
                     <input type="text" name="name">
                 </div>
@@ -25,12 +25,12 @@ $this->params['breadcrumbs'][] = $this->title;
             </form>
         </div>
     </div>
-    <table>
+    <table border="1">
         <?php foreach ($logs as $key => $log) {?>
         <tr>
             <td width="300"><?=$log->dirname;?></td>
             <td>
-                <a href="<?=Url::to(['site/createdir', 'dirname' => $log->dirname]);?>">查看子目录</a>
+                <a href="<?=Url::to(['site/index', 'dirname' => $log->dirname]);?>">查看子目录</a>
                 <a href="<?=Url::to(['site/showfiles', 'dirname' => $log->dirname]);?>">查看文件</a>
             </td>
         </tr>
