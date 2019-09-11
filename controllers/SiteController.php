@@ -115,7 +115,6 @@ class SiteController extends Controller
             $logCreatedirModel = new LogCreatedir();
             $logCreatedirModel->dirname = $model->name;
             return $logCreatedirModel->save();
-            // return $model->dirname;
         }
         return $this->render('createdir', [
             'model' => $model,
