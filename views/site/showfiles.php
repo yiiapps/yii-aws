@@ -13,9 +13,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-lg-5">
             <div><?=$msg;?></div>
-            <form method="POST" action="<?php echo Url::to(['site/createdir', 'dirname' => \Yii::$app->request->get('dirname', '')]); ?>">
+            <form method="POST" enctype="multipart/form-data" action="<?php echo Url::to(['site/showfiles', 'dirname' => \Yii::$app->request->get('dirname', '')]); ?>">
                 <div class="form-group">
-                    <input type="text" name="name">
+                    <input type="file" name="file">
                 </div>
                 <div class="form-group">
                     <?=Html::submitButton('Submit', ['class' => 'btn btn-primary', 'name' => 'createdirform-button']);?>

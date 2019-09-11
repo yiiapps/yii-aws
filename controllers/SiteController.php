@@ -150,37 +150,23 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionUpload()
-    {
-        $msg = '';
-
-        if (Yii::$app->request->isPost) {
-            var_dump($_FILES);exit;
-            $post = Yii::$app->request->post();
-            var_dump($post);exit;
-        }
-
-        return $this->render('upload', [
-            'msg' => $msg,
-        ]);
-
-        // $result = $s3->upload('test/test.txt', '/work/d/phpapps/yii-aws/test.txt');
-
-        // $result = $s3->put('test/test1.txt', 'body');
-
-        // var_dump($result);exit;
-    }
-
     public function actionShowfiles()
     {
         $msg = '';
         $getDirname = Yii::$app->request->get('dirname', '');
-        $modelLogUploadfile = new \app\models\LogUploadfile();
+        if (Yii::$app->request->isPost) {
+            $s3 = Yii::$app->get('s3');
+            $filename = $getDirname . '/' . $_FILES['file']['name'];
+            $result = $s3->upload($filename, $_FILES['file']['tmp_name']);
+
+            $modelLogUploadfile = new \app\models\LogUploadfile();
+            $modelLogUploadfile->filename = $_FILES['file']['name'];
+            $modelLogUploadfile->dirname = $getDirname;
+            $modelLogUploadfile->url = $result->get('ObjectURL');
+            $modelLogUploadfile->save();
+            $msg = '添加成功';
+        }
+
         $logs = LogUploadfile::findAll(['dirname' => $getDirname]);
         return $this->render('showfiles', [
             'logs' => $logs, 'msg' => $msg,
