@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\LogCreatedir;
 use app\models\LoginForm;
+use app\models\LogUploadfile;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -156,14 +157,33 @@ class SiteController extends Controller
      */
     public function actionUpload()
     {
+        $msg = '';
 
-        //
+        if (Yii::$app->request->isPost) {
+            var_dump($_FILES);exit;
+            $post = Yii::$app->request->post();
+            var_dump($post);exit;
+        }
+
+        return $this->render('upload', [
+            'msg' => $msg,
+        ]);
 
         // $result = $s3->upload('test/test.txt', '/work/d/phpapps/yii-aws/test.txt');
 
         // $result = $s3->put('test/test1.txt', 'body');
 
         // var_dump($result);exit;
-        return $this->render('upload');
+    }
+
+    public function actionShowfiles()
+    {
+        $msg = '';
+        $getDirname = Yii::$app->request->get('dirname', '');
+        $modelLogUploadfile = new \app\models\LogUploadfile();
+        $logs = LogUploadfile::findAll(['dirname' => $getDirname]);
+        return $this->render('showfiles', [
+            'logs' => $logs, 'msg' => $msg,
+        ]);
     }
 }
