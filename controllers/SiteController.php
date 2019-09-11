@@ -2,7 +2,6 @@
 
 namespace app\controllers;
 
-use app\models\CreatedirForm;
 use app\models\LogCreatedir;
 use app\models\LoginForm;
 use Yii;
@@ -13,6 +12,7 @@ use yii\web\Response;
 
 class SiteController extends Controller
 {
+    public $enableCsrfValidation = false;
     /**
      * {@inheritdoc}
      */
@@ -111,30 +111,41 @@ class SiteController extends Controller
     public function actionCreatedir()
     {
         $msg = '';
-        $model = new CreatedirForm();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $count = LogCreatedir::find()->where(['dirname' => $model->name])->count();
+        $request = \Yii::$app->request;
+        $getDirname = $request->get('dirname', '');
+        if ($request->isPost) {
+            $dirname = $request->post('name');
+            if ($getDirname) {
+                $dirname = $getDirname . '/' . $dirname;
+            }
+            $count = LogCreatedir::find()->where(['dirname' => $dirname])->count();
             if ($count > 0) {
                 $msg = '目录已存在';
             } else {
                 $s3 = Yii::$app->get('s3');
-                $filename = $model->name . '/index.html';
-                $exist = $s3->exist($model->name . '/');
+                $filename = $dirname . '/index.html';
+                $exist = $s3->exist($dirname . '/');
                 if ($exist) {
                     $msg = '目录被占用';
                 } else {
                     $result = $s3->put($filename, '为了创建目录, 建立的空文件');
 
                     $logCreatedirModel = new LogCreatedir();
-                    $logCreatedirModel->dirname = $model->name;
+                    $logCreatedirModel->dirname = $dirname;
                     $logCreatedirModel->save();
 
                     $msg = '创建成功';
                 }
             }
         }
+        if ($getDirname) {
+            $logs = LogCreatedir::find()->where("dirname like '{$getDirname}/%'")->all();
+        } else {
+            $logs = LogCreatedir::find()->all();
+        }
         return $this->render('createdir', [
-            'model' => $model, 'msg' => $msg,
+            'msg' => $msg,
+            'logs' => $logs,
         ]);
     }
 
