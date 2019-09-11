@@ -14,6 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?=Html::encode($this->title);?></h1>
     <div class="row">
         <div class="col-lg-5">
+            <div><?=$msg;?></div>
             <?php $form = ActiveForm::begin(['id' => 'createdirform-form']);?>
             <?=$form->field($model, 'name')->textInput(['autofocus' => true]);?>
             <div class="form-group">

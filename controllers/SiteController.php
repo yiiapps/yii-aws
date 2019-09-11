@@ -110,14 +110,31 @@ class SiteController extends Controller
      */
     public function actionCreatedir()
     {
+        $msg = '';
         $model = new CreatedirForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $logCreatedirModel = new LogCreatedir();
-            $logCreatedirModel->dirname = $model->name;
-            return $logCreatedirModel->save();
+            $count = LogCreatedir::find()->where(['dirname' => $model->name])->count();
+            if ($count > 0) {
+                $msg = '目录已存在';
+            } else {
+                $s3 = Yii::$app->get('s3');
+                $filename = $model->name . '/index.html';
+                $exist = $s3->exist($model->name . '/');
+                if ($exist) {
+                    $msg = '目录被占用';
+                } else {
+                    $result = $s3->put($filename, '为了创建目录, 建立的空文件');
+
+                    $logCreatedirModel = new LogCreatedir();
+                    $logCreatedirModel->dirname = $model->name;
+                    $logCreatedirModel->save();
+
+                    $msg = '创建成功';
+                }
+            }
         }
         return $this->render('createdir', [
-            'model' => $model,
+            'model' => $model, 'msg' => $msg,
         ]);
     }
 
