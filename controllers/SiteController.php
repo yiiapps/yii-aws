@@ -167,6 +167,23 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionDeletefile()
+    {
+        $id = Yii::$app->request->get('id', 0);
+        $id = intval($id);
+        $dirname = Yii::$app->request->get('dirname', '');
+        $logUploadfile = LogUploadfile::findOne($id);
+        if (!$logUploadfile) {
+            $msg = '文件不存在';
+        }
+
+        $s3 = Yii::$app->get('s3');
+        $result = $s3->delete("{$logUploadfile->dirname}/{$logUploadfile->filename}");
+        $logUploadfile->delete();
+
+        $this->redirect(['site/showfiles', 'dirname' => $dirname]);
+    }
+
     private function valiName($name)
     {
         if (preg_match('/^[a-zA-Z0-9\.\-_]+$/', $name, $matches)) {

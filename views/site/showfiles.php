@@ -29,6 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <td width="300"><?=$log->dirname;?></td>
             <td width="300"><?=$log->filename;?></td>
             <td><?=$log->url;?></td>
+            <td>
+                <a href="<?=Url::to(['site/deletefile', 'id' => $log->id, 'dirname' => \Yii::$app->request->get('dirname', '')]);?>" onClick="return confirm('确定要删除吗? 删除后无法恢复');">删除</a>
+            </td>
         </tr>
         <?php }?>
     </table>
