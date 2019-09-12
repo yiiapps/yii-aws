@@ -114,18 +114,19 @@ class SiteController extends Controller
                 } else {
                     $s3 = Yii::$app->get('s3');
                     $filename = $dirname . '/index.html';
-                    $exist = $s3->exist($dirname . '/');
-                    if ($exist) {
-                        $msg = '目录被占用';
-                    } else {
-                        $result = $s3->put($filename, '为了创建目录, 建立的空文件');
+                    // $exist = $s3->exist($dirname . '/');
+                    // if ($exist) {
+                    //     $msg = '目录被占用';
+                    // } else {
+                    $result = $s3->put($filename, '为了创建目录, 建立的空文件');
 
-                        $logCreatedirModel = new LogCreatedir();
-                        $logCreatedirModel->dirname = $dirname;
-                        $logCreatedirModel->save();
+                    $logCreatedirModel = new LogCreatedir();
+                    $logCreatedirModel->dirname = $dirname;
+                    $logCreatedirModel->save();
 
-                        $msg = '创建成功';
-                    }
+                    $msg = '创建成功';
+                    $this->redirect(['site/index', 'dirname' => $getDirname]);
+                    // }
                 }
             }
         }
@@ -158,6 +159,7 @@ class SiteController extends Controller
                 $modelLogUploadfile->url = $result->get('ObjectURL');
                 $modelLogUploadfile->save();
                 $msg = '添加成功';
+                $this->redirect(['site/showfiles', 'dirname' => $getDirname]);
             }
         }
 
@@ -180,6 +182,24 @@ class SiteController extends Controller
         $s3 = Yii::$app->get('s3');
         $result = $s3->delete("{$logUploadfile->dirname}/{$logUploadfile->filename}");
         $logUploadfile->delete();
+
+        $this->redirect(['site/showfiles', 'dirname' => $dirname]);
+    }
+
+    public function actionDeletefiles()
+    {
+        $ids = Yii::$app->request->post('ids', []);
+        $s3 = Yii::$app->get('s3');
+        foreach ($ids as $key => $id) {
+            $id = intval($id);
+            $logUploadfile = LogUploadfile::findOne($id);
+            if (!$logUploadfile) {
+                return '文件不存在';
+            }
+            $result = $s3->delete("{$logUploadfile->dirname}/{$logUploadfile->filename}");
+            $logUploadfile->delete();
+        }
+        $dirname = Yii::$app->request->get('dirname', '');
 
         $this->redirect(['site/showfiles', 'dirname' => $dirname]);
     }
