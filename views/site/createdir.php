@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <td>
                 <a href="<?=Url::to(['site/index', 'dirname' => $log->dirname]);?>">查看子目录</a>
                 <a href="<?=Url::to(['site/showfiles', 'dirname' => $log->dirname]);?>">查看文件</a>
+                <a href="<?=Url::to(['site/deletedir', 'id' => $log->id, 'dirname' => \Yii::$app->request->get('dirname', '')]);?>" onClick="return confirm('确定要删除吗? 删除后无法恢复, 且会删除所有子文件夹和文件夹下面的文件');">删除</a>
             </td>
         </tr>
         <?php }?>

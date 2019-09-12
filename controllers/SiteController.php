@@ -174,7 +174,7 @@ class SiteController extends Controller
         $dirname = Yii::$app->request->get('dirname', '');
         $logUploadfile = LogUploadfile::findOne($id);
         if (!$logUploadfile) {
-            $msg = '文件不存在';
+            return '文件不存在';
         }
 
         $s3 = Yii::$app->get('s3');
@@ -182,6 +182,35 @@ class SiteController extends Controller
         $logUploadfile->delete();
 
         $this->redirect(['site/showfiles', 'dirname' => $dirname]);
+    }
+
+    public function actionDeletedir()
+    {
+        $id = Yii::$app->request->get('id', 0);
+        $id = intval($id);
+        $dirname = Yii::$app->request->get('dirname', '');
+        $logCreatedir = LogCreatedir::findOne($id);
+        if (!$logCreatedir) {
+            return '文件夹不存在';
+        }
+
+        $s3 = Yii::$app->get('s3');
+        $logsFile = LogUploadfile::find()->where("dirname='{$logCreatedir->dirname}' or dirname like '{$logCreatedir->dirname}/%'")->all();
+        foreach ($logsFile as $key => $logFile) {
+            $result = $s3->delete("{$logFile->dirname}/{$logFile->filename}");
+            $logFile->delete();
+        }
+
+        $logsDir = logCreatedir::find()->where("dirname like '{$logCreatedir->dirname}/%'")->all();
+        foreach ($logsDir as $key => $logDir) {
+            $result = $s3->delete("{$logDir->dirname}/index.html");
+            $logDir->delete();
+        }
+
+        $result = $s3->delete("{$logCreatedir->dirname}/index.html");
+        $logCreatedir->delete();
+
+        $this->redirect(['site/index', 'dirname' => $dirname]);
     }
 
     private function valiName($name)
