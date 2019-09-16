@@ -9,6 +9,13 @@ $this->title = '文件列表';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-about">
+    <h1>搜索</h1>
+    <form method="POST" action="<?php echo Url::to(['site/filesajax']); ?>">
+        <div>
+            <input type="text" id="searchkey">
+            <button id="searchbt">搜索</button>
+        </div>
+    </form>
     <h1><?=Html::encode($this->title);?></h1>
     <style type="text/css">
         <!--
@@ -34,6 +41,27 @@ $this->params['breadcrumbs'][] = $this->title;
 <script type="text/javascript" src="<?=Url::to('@web/jQuery-File-Upload-10.2.0/js/jquery.fileupload.js');?>"></script>
 <script>
     $(function(){
+        $('#searchbt').click(function(){
+            var url = '<?=Url::to(['site/filesajax']);?>';
+            $('table').empty();
+
+            $.get('<?=Url::to(['site/filesajax']);?>?searchkey='+$('#searchkey').val(),function(data){
+                for(var i in data.data){
+                    var fileinfo = data.data[i];
+                    var content = "<tr>"+
+                    "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+fileinfo.id+"\"></td>"+
+                        "<td class=\"unnamed1\">"+fileinfo.dirname+"</td>"+
+                        "<td class=\"unnamed1\">"+fileinfo.filename+"</td>"+
+                        "<td class=\"unnamed1\">"+fileinfo.url+"</td>"+
+                        // "<td class=\"unnamed1\">"+
+                        //     "<a href=\"+delurl+\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
+                        // "</td>"+
+                    "</tr>";
+                    $('#datatable').prepend(content);
+                }
+            },'json')
+            return false;
+        });
         $.get('<?=Url::to(['site/filesajax']);?>',function(data){
             for(var i in data.data){
                 var fileinfo = data.data[i];

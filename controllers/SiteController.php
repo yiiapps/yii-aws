@@ -193,7 +193,13 @@ class SiteController extends Controller
 
     public function actionFilesajax()
     {
-        $logs = LogUploadfile::find()->limit(20)->asArray()->all();
+        $key = Yii::$app->request->get('searchkey', '');
+        if ($key) {
+            $logs = LogUploadfile::find()->where("url like '%{$key}%'")->limit(200)->asArray()->all();
+        } else {
+            $logs = LogUploadfile::find()->limit(200)->asArray()->all();
+        }
+
         return json_encode([
             'errno' => 0,
             'data' => $logs,
