@@ -39,6 +39,7 @@ echo Nav::widget([
     'options' => ['class' => 'navbar-nav navbar-right'],
     'items' => [
         ['label' => '首页', 'url' => ['/site/index']],
+        ['label' => '文件列表', 'url' => ['/site/showfiles']],
         // Yii::$app->user->isGuest ? (
         //     ['label' => 'Login', 'url' => ['/site/login']]
         // ) : (

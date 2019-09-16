@@ -9,7 +9,7 @@ $this->title = '文件列表';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-about">
-    <h1><?=Html::encode($this->title);?></h1>
+    <h1>上传文件</h1>
     <div class="row">
         <div class="col-lg-5">
             <input id="fileupload" type="file" name="file">
@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="uploadmsg"></div>
         </div>
     </div>
+    <h1><?=Html::encode($this->title);?></h1>
     <style type="text/css">
         <!--
         .unnamed1 {

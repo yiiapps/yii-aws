@@ -68,17 +68,20 @@ $this->params['breadcrumbs'][] = $this->title;
             console.log(data.result);
             $(".uploadmsg").html(data.result.msg);
             if (!data.result.errno) {
-                var delurl = "<?=Url::to(['site/deletefile']);?>"+"?id="+data.result.data.fileinfo.id+"&dirname="+data.result.data.getDirname;
-                var content = "<tr>"+
-                "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+data.result.data.fileinfo.id+"\"></td>"+
-                    "<td class=\"unnamed1\">"+data.result.data.fileinfo.dirname+"</td>"+
-                    "<td class=\"unnamed1\">"+data.result.data.fileinfo.filename+"</td>"+
-                    "<td class=\"unnamed1\">"+data.result.data.fileinfo.url+"</td>"+
-                    "<td class=\"unnamed1\">"+
-                        "<a href=\"+delurl+\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
-                    "</td>"+
-                "</tr>";
-                $('#datatable').prepend(content);
+                for(var r in data.result.data) {
+                    var fileinfo=data.result.data[r]
+                    // var delurl = "<?=Url::to(['site/deletefile']);?>"+"?id="+fileinfo.id;
+                    var content = "<tr>"+
+                    // "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+fileinfo.id+"\"></td>"+
+                        "<td class=\"unnamed1\"></td>"+
+                        "<td class=\"unnamed1\"></td>"+
+                        "<td class=\"unnamed1\">"+fileinfo.url+"</td>"+
+                        // "<td class=\"unnamed1\">"+
+                        //     "<a href=\""+delurl+"\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
+                        // "</td>"+
+                    "</tr>";
+                    $('#datatable').prepend(content);
+                };
             }
         }
     });
