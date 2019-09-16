@@ -241,4 +241,44 @@ class SiteController extends Controller
             return false; //name 不合法
         }
     }
+
+    public function actionUpload()
+    {
+        $getDirname = Yii::$app->request->get('dirname', '');
+        $data = [];
+        if (empty($_FILES['file']['name']) || !$this->valiName($_FILES['file']['name'])) {
+            $msg = '名字不合法';
+            $errno = 1;
+        } else {
+            $s3 = Yii::$app->get('s3');
+            $filename = $getDirname . '/' . $_FILES['file']['name'];
+            $result = $s3->upload($filename, $_FILES['file']['tmp_name']);
+
+            $url = $result->get('ObjectURL');
+
+            $modelLogUploadfile = new \app\models\LogUploadfile();
+            $modelLogUploadfile->filename = $_FILES['file']['name'];
+            $modelLogUploadfile->dirname = $getDirname;
+            $modelLogUploadfile->url = $url;
+            $modelLogUploadfile->save();
+
+            $msg = '添加成功';
+            $errno = 0;
+            $data = [
+                'getDirname' => $getDirname,
+                'fileinfo' => [
+                    'filename' => $_FILES['file']['name'],
+                    'dirname' => $getDirname,
+                    'url' => $url,
+                    'id' => $modelLogUploadfile->id,
+                ],
+            ];
+        }
+
+        return json_encode([
+            'msg' => $msg,
+            'errno' => $errno,
+            'data' => $data,
+        ]);
+    }
 }
