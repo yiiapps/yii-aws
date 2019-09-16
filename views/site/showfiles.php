@@ -64,8 +64,9 @@ $this->params['breadcrumbs'][] = $this->title;
         },
         //上传完成之后的操作，显示在img里面
         done: function (e, data){
-            $("#uploadmsg").html(data.msg);
-            if (!data.errno) {
+            console.log(data.result);
+            $(".uploadmsg").html(data.result.msg);
+            if (!data.result.errno) {
                 var delurl = "<?=Url::to(['site/deletefile']);?>"+"?id="+data.result.data.fileinfo.id+"&dirname="+data.result.data.getDirname;
                 var content = "<tr>"+
                 "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+data.result.data.fileinfo.id+"\"></td>"+

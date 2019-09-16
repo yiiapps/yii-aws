@@ -249,6 +249,12 @@ class SiteController extends Controller
         if (empty($_FILES['file']['name']) || !$this->valiName($_FILES['file']['name'])) {
             $msg = '名字不合法';
             $errno = 1;
+        } elseif (!$this->checkExt($_FILES['file']['name'])) {
+            $msg = '不是图片';
+            $errno = 2;
+        } elseif ($_FILES['file']['size'] > 500 * 1024) {
+            $msg = '图片大于500k';
+            $errno = 3;
         } else {
             $s3 = Yii::$app->get('s3');
             $filename = $getDirname . '/' . $_FILES['file']['name'];
@@ -280,5 +286,41 @@ class SiteController extends Controller
             'errno' => $errno,
             'data' => $data,
         ]);
+    }
+
+    private function checkExt($filename)
+    {
+        $array = array("gif", "png", "jpg", "jpeg"); //赋值一个数组
+        $tmp = explode(".", $filename); //用explode()函数把字符串打散成为数组。
+        $extension = end($tmp); //用end获取数组最后一个元素
+        if (in_array(strtolower($extension), $array)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function actionZip()
+    {
+        $zip = new \ZipArchive();
+
+        if ($zip->open('/work/e/test.zip') === true) {
+            $zip->extractTo('/work/d/phpapps/yii-aws/web/uploads/');
+            $zip->close();
+            echo 'ok';
+        }
+        // print_r($za);
+        // var_dump($za);
+        // echo "numFiles: " . $za->numFiles . "\n";
+        // echo "status: " . $za->status . "\n";
+        // echo "statusSys: " . $za->statusSys . "\n";
+        // echo "filename: " . $za->filename . "\n";
+        // echo "comment: " . $za->comment . "\n";
+
+        // for ($i = 0; $i < $za->numFiles; $i++) {
+        //     echo "index: $i\n";
+        //     print_r($za->statIndex($i));
+        // }
+        // echo "numFile:" . $za->numFiles . "\n";
     }
 }
