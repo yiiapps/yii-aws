@@ -302,25 +302,98 @@ class SiteController extends Controller
 
     public function actionZip()
     {
-        $zip = new \ZipArchive();
+        return $this->render('uploadzip', ['logs' => []]);
+    }
 
-        if ($zip->open('/work/e/test.zip') === true) {
-            $zip->extractTo('/work/d/phpapps/yii-aws/web/uploads/');
-            $zip->close();
-            echo 'ok';
+    public function actionZippost()
+    {
+        $getDirname = Yii::$app->request->get('dirname', '');
+        $data = [];
+        if (empty($_FILES['file']['name']) || !$this->valiName($_FILES['file']['name'])) {
+            $msg = '名字不合法';
+            $errno = 1;
+        } else {
+            $tmp = explode(".", $_FILES['file']['name']);
+            $extension = end($tmp);
+            $extension = strtolower($extension);
+            if ($extension == 'zip') {
+                $dir = Yii::$app->basePath . "/web/uploads/" . date('Y-m-d');
+                $file = $dir . '/' . $_FILES['file']['name'];
+                if (!file_exists($file)) {
+                    if (!file_exists($dir)) {
+                        mkdir($dir);
+                    }
+                    if (move_uploaded_file($_FILES['file']['tmp_name'], $file)) {
+                        $zip = new \ZipArchive();
+                        if ($zip->open($file) === true) {
+                            $extdir = $dir . '/extract';
+                            if (!file_exists($extdir)) {
+                                mkdir($extdir);
+                            }
+                            $zip->extractTo($extdir . '/');
+                            $zip->close();
+                            // unlink($file);
+                            $data = $this->push2awss3($extdir);
+                            $msg = '成功';
+                            $errno = 0;
+                        } else {
+                            $msg = 'zip非法';
+                            $errno = 7;
+                        }
+                    } else {
+                        $msg = '上传失败';
+                        $errno = 6;
+                    }
+                } else {
+                    $msg = '文件已存在';
+                    $errno = 5;
+                }
+
+            } else {
+                $msg = '不是zip文件';
+                $errno = 4;
+            }
         }
-        // print_r($za);
-        // var_dump($za);
-        // echo "numFiles: " . $za->numFiles . "\n";
-        // echo "status: " . $za->status . "\n";
-        // echo "statusSys: " . $za->statusSys . "\n";
-        // echo "filename: " . $za->filename . "\n";
-        // echo "comment: " . $za->comment . "\n";
 
-        // for ($i = 0; $i < $za->numFiles; $i++) {
-        //     echo "index: $i\n";
-        //     print_r($za->statIndex($i));
-        // }
-        // echo "numFile:" . $za->numFiles . "\n";
+        return json_encode([
+            'msg' => $msg,
+            'errno' => $errno,
+            'data' => $data,
+        ]);
+    }
+
+    private function push2awss3($dir)
+    {
+        $uploaddir = Yii::$app->basePath . "/web/uploads/";
+        $handle = opendir($dir);
+        $s3 = Yii::$app->get('s3');
+        $rs = [];
+        while (false !== ($file = readdir($handle))) {
+            if ($file == "." || $file == "..") {
+                continue;
+            }
+            if (is_dir($dir . '/' . $file)) {
+                $rsTmp = $this->push2awss3($dir . '/' . $file);
+                $rs = $rs + $rsTmp;
+            } else {
+                $filename = str_replace($uploaddir, '', $dir . '/' . $file);
+                $result = $s3->upload($filename, $dir . '/' . $file);
+
+                $url = $result->get('ObjectURL');
+
+                $modelLogUploadfile = new \app\models\LogUploadfile();
+                $modelLogUploadfile->filename = $filename;
+                $modelLogUploadfile->dirname = '';
+                $modelLogUploadfile->url = $url;
+                $modelLogUploadfile->save();
+
+                $rs[] = [
+                    'id' => $modelLogUploadfile->id,
+                    'url' => $url,
+                ];
+            }
+        }
+        closedir($handle);
+        return $rs;
     }
 }
