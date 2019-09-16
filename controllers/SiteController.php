@@ -218,6 +218,24 @@ class SiteController extends Controller
         $this->redirect(['site/showfiles', 'dirname' => $dirname]);
     }
 
+    public function actionDeletefiles2()
+    {
+        $ids = Yii::$app->request->post('ids', []);
+        $s3 = Yii::$app->get('s3');
+        foreach ($ids as $key => $id) {
+            $id = intval($id);
+            $logUploadfile = LogUploadfile::findOne($id);
+            if (!$logUploadfile) {
+                return '文件不存在';
+            }
+            $result = $s3->delete("{$logUploadfile->dirname}/{$logUploadfile->filename}");
+            $logUploadfile->delete();
+        }
+        // $dirname = Yii::$app->request->get('dirname', '');
+
+        $this->redirect(['site/showfiles2']);
+    }
+
     public function actionDeletedir()
     {
         $id = Yii::$app->request->get('id', 0);

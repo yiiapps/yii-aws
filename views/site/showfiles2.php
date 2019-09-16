@@ -37,7 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
         $.get('<?=Url::to(['site/filesajax']);?>',function(data){
             for(var i in data.data){
                 var fileinfo = data.data[i];
-                console.log(fileinfo);
                 var content = "<tr>"+
                 "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+fileinfo.id+"\"></td>"+
                     "<td class=\"unnamed1\">"+fileinfo.dirname+"</td>"+
