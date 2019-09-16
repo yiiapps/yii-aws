@@ -169,6 +169,11 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionShowfiles2()
+    {
+        return $this->render('showfiles2');
+    }
+
     public function actionDeletefile()
     {
         $id = Yii::$app->request->get('id', 0);
@@ -184,6 +189,15 @@ class SiteController extends Controller
         $logUploadfile->delete();
 
         $this->redirect(['site/showfiles', 'dirname' => $dirname]);
+    }
+
+    public function actionFilesajax()
+    {
+        $logs = LogUploadfile::find()->limit(20)->asArray()->all();
+        return json_encode([
+            'errno' => 0,
+            'data' => $logs,
+        ]);
     }
 
     public function actionDeletefiles()
