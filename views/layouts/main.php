@@ -40,7 +40,7 @@ echo Nav::widget([
     'items' => [
         ['label' => '首页', 'url' => ['/site/index']],
         ['label' => '文件列表', 'url' => ['/site/showfiles2']],
-        // ['label' => '上传zip', 'url' => ['/site/zip']],
+        ['label' => '上传zip', 'url' => ['/site/zip']],
         // Yii::$app->user->isGuest ? (
         //     ['label' => 'Login', 'url' => ['/site/login']]
         // ) : (
