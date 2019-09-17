@@ -206,6 +206,21 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionSearchdir()
+    {
+        $key = Yii::$app->request->get('searchkey', '');
+        if ($key) {
+            $logs = LogCreatedir::find()->where("dirname like '%{$key}%'")->limit(200)->asArray()->all();
+        } else {
+            $logs = LogCreatedir::find()->limit(200)->asArray()->all();
+        }
+
+        return json_encode([
+            'errno' => 0,
+            'data' => $logs,
+        ]);
+    }
+
     public function actionDeletefiles()
     {
         $ids = Yii::$app->request->post('ids', []);
