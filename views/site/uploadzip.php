@@ -31,9 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <form method="POST" action="<?php echo Url::to(['site/deletefiles', 'dirname' => \Yii::$app->request->get('dirname', '')]); ?>">
     <table id="datatable" border="1" cellpadding="10">
     </table>
-    <div class="form-group">
-        <?=Html::submitButton('批量删除', ['class' => 'btn btn-primary', 'name' => 'createdirform-button']);?>
-    </div>
     </form>
 </div>
 <script src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
