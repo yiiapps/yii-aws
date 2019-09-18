@@ -428,17 +428,22 @@ class SiteController extends Controller
             if ($file == "." || $file == ".." || $file == $zipfilename) {
                 continue;
             }
-            $s3dir = str_replace($uploaddir, '', $dir);
             $filename = $dir . '/' . $file;
-            $s3filename = $s3dir . '/' . $file;
+            if ($dir == Yii::$app->basePath . "/web/uploads") {
+                $s3dir = '';
+                $s3filename = $file;
+            } else {
+                $s3dir = str_replace($uploaddir, '', $dir);
+                $s3filename = $s3dir . '/' . $file;
+            }
             if (is_dir($filename)) {
                 $filename1 = $s3dir . '/index.html';
                 $result = $s3->put($filename1, '为了创建目录, 建立的空文件');
 
-                $count = LogCreatedir::find()->where(['dirname' => $s3dir])->count();
-                if ($count < 1) {
+                $count = LogCreatedir::find()->where(['dirname' => $s3filename])->count();
+                if ($count < 1 && $s3filename) {
                     $logCreatedirModel = new LogCreatedir();
-                    $logCreatedirModel->dirname = $s3dir;
+                    $logCreatedirModel->dirname = $s3filename;
                     $logCreatedirModel->save();
                 }
 
