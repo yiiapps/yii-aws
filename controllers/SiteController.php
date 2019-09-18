@@ -355,13 +355,14 @@ class SiteController extends Controller
 
     public function actionZip()
     {
-        return $this->render('uploadzip', ['logs' => []]);
+        $getDirname = Yii::$app->request->get('dirname', '');
+        return $this->render('uploadzip', ['dirname' => $getDirname]);
     }
 
     public function actionZippost()
     {
         $getDirname = Yii::$app->request->get('dirname', '');
-        $data = [];
+        $data = ['dirname' => $getDirname];
         if (empty($_FILES['file']['name']) || !$this->valiName($_FILES['file']['name'])) {
             $msg = '名字不合法';
             $errno = 1;
@@ -370,23 +371,25 @@ class SiteController extends Controller
             $extension = end($tmp);
             $extension = strtolower($extension);
             if ($extension == 'zip') {
-                $dir = Yii::$app->basePath . "/web/uploads/" . date('Y-m-d');
-                $file = $dir . '/' . $_FILES['file']['name'];
+                $uploadDir = Yii::$app->basePath . "/web/uploads";
+                if ($getDirname) {
+                    $uploadDir = $uploadDir . '/' . $getDirname;
+                }
+                $file = $uploadDir . '/' . $_FILES['file']['name'];
                 if (!file_exists($file)) {
-                    if (!file_exists($dir)) {
-                        mkdir($dir);
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir);
                     }
                     if (move_uploaded_file($_FILES['file']['tmp_name'], $file)) {
                         $zip = new \ZipArchive();
                         if ($zip->open($file) === true) {
-                            $extdir = $dir . '/extract';
-                            if (!file_exists($extdir)) {
-                                mkdir($extdir);
+                            if (!file_exists($uploadDir)) {
+                                mkdir($uploadDir);
                             }
-                            $zip->extractTo($extdir . '/');
+                            $zip->extractTo($uploadDir . '/');
                             $zip->close();
-                            // unlink($file);
-                            $data = $this->push2awss3($extdir);
+                            unlink($file);
+                            $data['filelist'] = $this->push2awss3($uploadDir, $_FILES['file']['name']);
                             $msg = '成功';
                             $errno = 0;
                         } else {
@@ -415,35 +418,51 @@ class SiteController extends Controller
         ]);
     }
 
-    private function push2awss3($dir)
+    private function push2awss3($dir, $zipfilename = '')
     {
         $uploaddir = Yii::$app->basePath . "/web/uploads/";
         $handle = opendir($dir);
         $s3 = Yii::$app->get('s3');
         $rs = [];
         while (false !== ($file = readdir($handle))) {
-            if ($file == "." || $file == "..") {
+            if ($file == "." || $file == ".." || $file == $zipfilename) {
                 continue;
             }
-            if (is_dir($dir . '/' . $file)) {
-                $rsTmp = $this->push2awss3($dir . '/' . $file);
+            $s3dir = str_replace($uploaddir, '', $dir);
+            $filename = $dir . '/' . $file;
+            $s3filename = $s3dir . '/' . $file;
+            if (is_dir($filename)) {
+                $filename1 = $s3dir . '/index.html';
+                $result = $s3->put($filename1, '为了创建目录, 建立的空文件');
+
+                $count = LogCreatedir::find()->where(['dirname' => $s3dir])->count();
+                if ($count < 1) {
+                    $logCreatedirModel = new LogCreatedir();
+                    $logCreatedirModel->dirname = $s3dir;
+                    $logCreatedirModel->save();
+                }
+
+                $rsTmp = $this->push2awss3($filename);
                 $rs = $rs + $rsTmp;
+                @rmdir($filename);
             } else {
-                $filename = str_replace($uploaddir, '', $dir . '/' . $file);
-                $result = $s3->upload($filename, $dir . '/' . $file);
+                $result = $s3->upload($s3filename, $filename);
 
                 $url = $result->get('ObjectURL');
 
                 $modelLogUploadfile = new \app\models\LogUploadfile();
-                $modelLogUploadfile->filename = $filename;
-                $modelLogUploadfile->dirname = '';
+                $modelLogUploadfile->filename = $s3filename;
+                $modelLogUploadfile->dirname = $s3dir;
                 $modelLogUploadfile->url = $url;
                 $modelLogUploadfile->save();
 
                 $rs[] = [
                     'id' => $modelLogUploadfile->id,
                     'url' => $url,
+                    'dirname' => $s3dir,
+                    'filename' => $s3filename,
                 ];
+                unlink($filename);
             }
         }
         closedir($handle);

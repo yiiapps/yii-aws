@@ -53,8 +53,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <tr>
             <td class="unnamed1"><?=$log->dirname;?></td>
             <td class="unnamed1">
+                <a href="<?=Url::to(['site/zip', 'dirname' => $log->dirname]);?>" target="_blank">上传ZIP</a>
                 <a href="<?=Url::to(['site/index', 'dirname' => $log->dirname]);?>">查看子目录</a>
-                <a href="<?=Url::to(['site/showfiles', 'dirname' => $log->dirname]);?>">查看文件</a>
+                <a href="<?=Url::to(['site/showfiles', 'dirname' => $log->dirname]);?>" target="_blank">查看文件</a>
                 <a href="<?=Url::to(['site/deletedir', 'id' => $log->id]);?>" onClick="return confirm('确定要删除吗? 删除后无法恢复, 且会删除所有子文件夹和文件夹下面的文件');">删除</a>
             </td>
         </tr>
@@ -78,8 +79,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     var content = "<tr>"+
                         "<td class=\"unnamed1\">"+item.dirname+"</td>"+
                         "<td class=\"unnamed1\">"+
+                            "<a href=\""+dirlistUrl+"?dirname="+item.dirname+"\" target=\"_blank\">上传ZIP</a>&nbsp; "+
                             "<a href=\""+dirlistUrl+"?dirname="+item.dirname+"\">查看子目录</a>&nbsp; "+
-                            "<a href=\""+showfilesUrl+"?dirname="+item.dirname+"\">查看文件</a>&nbsp; "+
+                            "<a href=\""+showfilesUrl+"?dirname="+item.dirname+"\" target=\"_blank\">查看文件</a>&nbsp; "+
                             "<a href=\""+deletedirUrl+"?id="+item.id+"\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复, 且会删除所有子文件夹和文件夹下面的文件');\">删除</a>&nbsp; "+
                         "</td>"+
                     "</tr>";
