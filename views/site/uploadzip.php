@@ -9,7 +9,7 @@ $this->title = '上传Zip';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-about">
-    <h1><?=Html::encode($this->title);?>::当前目录(<?=$dirname;?>)</h1>
+    <h1><?=Html::encode($this->title);?>::当前目录(<?=$dirname ?: '跟目录';?>)</h1>
     <div class="row">
         <div class="col-lg-5">
             <input id="fileupload" type="file" name="file">
