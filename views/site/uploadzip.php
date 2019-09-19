@@ -35,21 +35,13 @@ $this->params['breadcrumbs'][] = $this->title;
     </form>
 </div>
 <script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
-<script type="text/javascript" src="<?=Url::to('@web/upload_h5/jQuery.upload.min.js');?>"></script>
+<script type="text/javascript" src="<?=Url::to('@web/upload_h5/jQuery.upload.uploadzip.js');?>"></script>
 <script>
 $(function() {
     $("#case1").upload(
         function(_this, data) {
             console.log(data)
         }
-        // function(successData) {
-        //     console.log(successData);
-        // }
     );
-    // $.fn.upload = function(look_call_back,successCallback){
-    //     if (successCallback && typeof successCallback == 'function') {
-    //         successCallback(data.data[0], item);
-    //     }
-    // }
 })
 </script>

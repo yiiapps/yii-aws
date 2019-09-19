@@ -423,7 +423,7 @@ class SiteController extends Controller
 
         return json_encode([
             'msg' => $msg,
-            'errno' => $errno,
+            'code' => $errno == 0 ? 1 : 0,
             'data' => $data,
         ]);
     }
