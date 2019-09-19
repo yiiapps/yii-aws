@@ -163,7 +163,10 @@ class SiteController extends Controller
             }
         }
 
-        $logs = LogUploadfile::findAll(['dirname' => $getDirname]);
+        $logs = LogUploadfile::find()->where(['dirname' => $getDirname])->asArray()->all();
+        foreach ($logs as $key => &$value) {
+            $value['isImage'] = $this->checkExt($value['filename']);
+        }
         return $this->render('showfiles', [
             'logs' => $logs, 'msg' => $msg,
         ]);
@@ -198,6 +201,10 @@ class SiteController extends Controller
             $logs = LogUploadfile::find()->where("url like '%{$key}%'")->limit(200)->asArray()->all();
         } else {
             $logs = LogUploadfile::find()->limit(200)->asArray()->all();
+        }
+
+        foreach ($logs as $key => &$value) {
+            $value['isImage'] = $this->checkExt($value['filename']);
         }
 
         return json_encode([
@@ -330,6 +337,7 @@ class SiteController extends Controller
                     'dirname' => $getDirname,
                     'url' => $url,
                     'id' => $modelLogUploadfile->id,
+                    'isImage' => $this->checkExt($_FILES['file']['name']),
                 ],
             ];
         }

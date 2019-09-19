@@ -48,11 +48,16 @@ $this->params['breadcrumbs'][] = $this->title;
             $.get('<?=Url::to(['site/filesajax']);?>?searchkey='+$('#searchkey').val(),function(data){
                 for(var i in data.data){
                     var fileinfo = data.data[i];
+                    var yulan = '';
+                    if (fileinfo.isImage) {
+                        yulan = "<img src=\""+fileinfo.url+"\" height=\"120px\" width=\"120px\">";
+                    }
                     var content = "<tr>"+
-                    "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+fileinfo.id+"\"></td>"+
+                        "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+fileinfo.id+"\"></td>"+
                         "<td class=\"unnamed1\">"+fileinfo.dirname+"</td>"+
                         "<td class=\"unnamed1\">"+fileinfo.filename+"</td>"+
                         "<td class=\"unnamed1\">"+fileinfo.url+"</td>"+
+                        "<td class=\"unnamed1\">"+yulan+"</td>"+
                         // "<td class=\"unnamed1\">"+
                         //     "<a href=\"+delurl+\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
                         // "</td>"+
@@ -65,11 +70,16 @@ $this->params['breadcrumbs'][] = $this->title;
         $.get('<?=Url::to(['site/filesajax']);?>',function(data){
             for(var i in data.data){
                 var fileinfo = data.data[i];
+                var yulan = '';
+                if (fileinfo.isImage) {
+                    yulan = "<img src=\""+fileinfo.url+"\" height=\"120px\" width=\"120px\">";
+                }
                 var content = "<tr>"+
                 "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+fileinfo.id+"\"></td>"+
                     "<td class=\"unnamed1\">"+fileinfo.dirname+"</td>"+
                     "<td class=\"unnamed1\">"+fileinfo.filename+"</td>"+
                     "<td class=\"unnamed1\">"+fileinfo.url+"</td>"+
+                    "<td class=\"unnamed1\">"+yulan+"</td>"+
                     // "<td class=\"unnamed1\">"+
                     //     "<a href=\"+delurl+\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
                     // "</td>"+
@@ -95,11 +105,16 @@ $this->params['breadcrumbs'][] = $this->title;
             $(".uploadmsg").html(data.result.msg);
             if (!data.result.errno) {
                 var delurl = "<?=Url::to(['site/deletefile']);?>"+"?id="+data.result.data.fileinfo.id+"&dirname="+data.result.data.getDirname;
+                var yulan = '';
+                if (data.result.data.fileinfo.isImage) {
+                    yulan = "<img src=\""+data.result.data.fileinfo.url+"\" height=\"120px\" width=\"120px\">";
+                }
                 var content = "<tr>"+
                 "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+data.result.data.fileinfo.id+"\"></td>"+
                     "<td class=\"unnamed1\">"+data.result.data.fileinfo.dirname+"</td>"+
                     "<td class=\"unnamed1\">"+data.result.data.fileinfo.filename+"</td>"+
                     "<td class=\"unnamed1\">"+data.result.data.fileinfo.url+"</td>"+
+                    "<td class=\"unnamed1\">"+yulan+"</td>"+
                     "<td class=\"unnamed1\">"+
                         "<a href=\"+delurl+\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
                     "</td>"+
