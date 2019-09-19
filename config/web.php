@@ -60,6 +60,11 @@ $config = [
             'defaultBucket' => 'tiensmalltest',
             'defaultAcl' => 'public-read',
         ],
+        'assetManager' => [
+            'bundles' => [
+                'yii\web\JqueryAsset' => false,
+            ],
+        ],
     ],
     'params' => $params,
 ];

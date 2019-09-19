@@ -8,26 +8,27 @@ use yii\helpers\Url;
 $this->title = '文件列表';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<link rel="stylesheet" href="<?=Url::to('@web/upload_h5/upload.css');?>">
+<style type="text/css">
+    <!--
+    .unnamed1 {
+    padding-top: 1px;
+    padding-right: 5px;
+    padding-bottom: 1px;
+    padding-left: 5px;
+    }
+    -->
+</style>
 <div class="site-about">
     <h1>上传文件</h1>
     <div class="row">
         <div class="col-lg-5">
-            <input id="fileupload" type="file" name="file">
-            <div class="bar" style="width: 0%;"></div>
-            <div class="uploadmsg"></div>
+            <div class="case">
+                <div class="upload" action='<?=Url::to(['site/upload', 'dirname' => \Yii::$app->request->get('dirname', '')]);?>' id='case1'></div>
+            </div>
         </div>
     </div>
     <h1><?=Html::encode($this->title);?></h1>
-    <style type="text/css">
-        <!--
-        .unnamed1 {
-        padding-top: 1px;
-        padding-right: 5px;
-        padding-bottom: 1px;
-        padding-left: 5px;
-        }
-        -->
-    </style>
     <form method="POST" action="<?php echo Url::to(['site/deletefiles', 'dirname' => \Yii::$app->request->get('dirname', '')]); ?>">
     <table id="datatable" border="1" cellpadding="10">
         <?php foreach ($logs as $key => $log) {?>
@@ -48,44 +49,22 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     </form>
 </div>
-<script src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
-<script type="text/javascript" src="<?=Url::to('@web/jQuery-File-Upload-10.2.0/js/vendor/jquery.ui.widget.js');?>"></script>
-<script type="text/javascript" src="<?=Url::to('@web/jQuery-File-Upload-10.2.0/js/jquery.iframe-transport.js');?>"></script>
-<script type="text/javascript" src="<?=Url::to('@web/jQuery-File-Upload-10.2.0/js/jquery.fileupload.js');?>"></script>
+<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="<?=Url::to('@web/upload_h5/jQuery.upload.min.js');?>"></script>
 <script>
-    $('#fileupload').fileupload({
-        dataType: 'json',
-        url: "<?=Url::to(['site/upload', 'dirname' => \Yii::$app->request->get('dirname', '')]);?>",//文件的后台接受地址
-        //设置进度条
-        progressall: function (e, data) {
-            var progress = parseInt(data.loaded / data.total * 100);
-            $('#progress .bar').css(
-                'width',
-                progress + '%'
-            );
+$(function() {
+    $("#case1").upload(
+        function(_this, data) {
+            console.log(data)
         },
-        //上传完成之后的操作，显示在img里面
-        done: function (e, data){
-            console.log(data.result);
-            $(".uploadmsg").html(data.result.msg);
-            if (!data.result.errno) {
-                var delurl = "<?=Url::to(['site/deletefile']);?>"+"?id="+data.result.data.fileinfo.id+"&dirname="+data.result.data.getDirname;
-                var yulan = '';
-                if (data.result.data.fileinfo.isImage) {
-                    yulan = "<img src=\""+data.result.data.fileinfo.url+"\" height=\"120px\" width=\"120px\">";
-                }
-                var content = "<tr>"+
-                "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+data.result.data.fileinfo.id+"\"></td>"+
-                    "<td class=\"unnamed1\">"+data.result.data.fileinfo.dirname+"</td>"+
-                    "<td class=\"unnamed1\">"+data.result.data.fileinfo.filename+"</td>"+
-                    "<td class=\"unnamed1\">"+data.result.data.fileinfo.url+"</td>"+
-                    "<td class=\"unnamed1\">"+yulan+"</td>"+
-                    "<td class=\"unnamed1\">"+
-                        "<a href=\"+delurl+\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
-                    "</td>"+
-                "</tr>";
-                $('#datatable').prepend(content);
-            }
+        function(successData) {
+            console.log(successData);
         }
-    });
+    );
+    $.fn.upload = function(look_call_back,successCallback){
+        if (successCallback && typeof successCallback == 'function') {
+            successCallback(data.data[0], item);
+        }
+    }
+})
 </script>
