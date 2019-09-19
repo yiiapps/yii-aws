@@ -456,7 +456,7 @@ class SiteController extends Controller
                 $url = $result->get('ObjectURL');
 
                 $modelLogUploadfile = new \app\models\LogUploadfile();
-                $modelLogUploadfile->filename = $s3filename;
+                $modelLogUploadfile->filename = $file;
                 $modelLogUploadfile->dirname = $s3dir;
                 $modelLogUploadfile->url = $url;
                 $modelLogUploadfile->save();
@@ -465,7 +465,7 @@ class SiteController extends Controller
                     'id' => $modelLogUploadfile->id,
                     'url' => $url,
                     'dirname' => $s3dir,
-                    'filename' => $s3filename,
+                    'filename' => $file,
                 ];
                 unlink($filename);
             }
