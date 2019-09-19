@@ -165,7 +165,27 @@
                             contentType: false,
                             success: function(M) {
                                 M = JSON.parse(M);
+
                                 console.log(M);
+                                if (M.code) {
+                                    var delurl = M.data.delurl+"?id="+M.data.fileinfo.id+"&dirname="+M.data.getDirname;
+                                    var yulan = '';
+                                    if (M.data.fileinfo.isImage) {
+                                        yulan = "<img src=\""+M.data.fileinfo.url+"\" height=\"120px\" width=\"120px\">";
+                                    }
+                                    var content = "<tr>"+
+                                        "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+M.data.fileinfo.id+"\"></td>"+
+                                        "<td class=\"unnamed1\">"+M.data.fileinfo.dirname+"</td>"+
+                                        "<td class=\"unnamed1\">"+M.data.fileinfo.filename+"</td>"+
+                                        "<td class=\"unnamed1\">"+M.data.fileinfo.url+"</td>"+
+                                        "<td class=\"unnamed1\">"+yulan+"</td>"+
+                                        "<td class=\"unnamed1\">"+
+                                            "<a href=\"+delurl+\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
+                                        "</td>"+
+                                    "</tr>";
+                                    $('#datatable').prepend(content);
+                                }
+
                                 J.children("svg.progress").remove();
                                 J.children(".progressnum").remove();
                                 if (M.code) {

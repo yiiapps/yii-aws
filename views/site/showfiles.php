@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-lg-5">
             <div class="case">
-                <div class="upload" data-type="png,jpg,jpeg,gif" action='<?=Url::to(['site/upload', 'dirname' => \Yii::$app->request->get('dirname', '')]);?>' id='case1'></div>
+                <div class="upload" data-num="10" data-type="png,jpg,jpeg,gif" action='<?=Url::to(['site/upload', 'dirname' => \Yii::$app->request->get('dirname', '')]);?>' id='case1'></div>
             </div>
         </div>
     </div>
@@ -50,21 +50,13 @@ $this->params['breadcrumbs'][] = $this->title;
     </form>
 </div>
 <script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
-<script type="text/javascript" src="<?=Url::to('@web/upload_h5/jQuery.upload.min.js');?>"></script>
+<script type="text/javascript" src="<?=Url::to('@web/upload_h5/jQuery.upload.uploadfile.js');?>"></script>
 <script>
 $(function() {
     $("#case1").upload(
         function(_this, data) {
             console.log(data)
         }
-        // function(successData) {
-        //     console.log(successData);
-        // }
     );
-    // $.fn.upload = function(look_call_back,successCallback){
-    //     if (successCallback && typeof successCallback == 'function') {
-    //         successCallback(data.data[0], item);
-    //     }
-    // }
 })
 </script>

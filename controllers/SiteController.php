@@ -8,6 +8,7 @@ use app\models\LogUploadfile;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -308,13 +309,13 @@ class SiteController extends Controller
         $data = [];
         if (empty($_FILES['file']['name']) || !$this->valiName($_FILES['file']['name'])) {
             $msg = '名字不合法';
-            $errno = 1;
+            $errno = 0;
         } elseif (!$this->checkExt($_FILES['file']['name'])) {
             $msg = '不是图片';
-            $errno = 2;
+            $errno = 0;
         } elseif ($_FILES['file']['size'] > 500 * 1024) {
             $msg = '图片大于500k';
-            $errno = 3;
+            $errno = 0;
         } else {
             $s3 = Yii::$app->get('s3');
             $filename = $getDirname . '/' . $_FILES['file']['name'];
@@ -329,7 +330,7 @@ class SiteController extends Controller
             $modelLogUploadfile->save();
 
             $msg = '添加成功';
-            $errno = 0;
+            $errno = 1;
             $data = [
                 'getDirname' => $getDirname,
                 'fileinfo' => [
@@ -339,12 +340,13 @@ class SiteController extends Controller
                     'id' => $modelLogUploadfile->id,
                     'isImage' => $this->checkExt($_FILES['file']['name']),
                 ],
+                'delurl' => Url::to(['site/deletefile']),
             ];
         }
 
         return json_encode([
             'msg' => $msg,
-            'errno' => $errno,
+            'code' => $errno,
             'data' => $data,
         ]);
     }
