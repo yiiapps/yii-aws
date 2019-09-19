@@ -351,7 +351,7 @@ class SiteController extends Controller
 
     private function checkExt($filename)
     {
-        $array = array("gif", "png", "jpg", "jpeg", 'js'); //赋值一个数组
+        $array = array("gif", "png", "jpg", "jpeg"); //赋值一个数组
         $tmp = explode(".", $filename); //用explode()函数把字符串打散成为数组。
         $extension = end($tmp); //用end获取数组最后一个元素
         if (in_array(strtolower($extension), $array)) {
