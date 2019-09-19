@@ -166,9 +166,9 @@
                             success: function(M) {
                                 M = JSON.parse(M);
 
-                                console.log(M);
                                 if (M.code) {
                                     var delurl = M.data.delurl+"?id="+M.data.fileinfo.id+"&dirname="+M.data.getDirname;
+                                    console.log(delurl);
                                     var yulan = '';
                                     if (M.data.fileinfo.isImage) {
                                         yulan = "<img src=\""+M.data.fileinfo.url+"\" height=\"120px\" width=\"120px\">";
@@ -180,7 +180,7 @@
                                         "<td class=\"unnamed1\">"+M.data.fileinfo.url+"</td>"+
                                         "<td class=\"unnamed1\">"+yulan+"</td>"+
                                         "<td class=\"unnamed1\">"+
-                                            "<a href=\"+delurl+\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
+                                            "<a href=\""+delurl+"\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
                                         "</td>"+
                                     "</tr>";
                                     $('#datatable').prepend(content);
