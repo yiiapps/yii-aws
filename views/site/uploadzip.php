@@ -57,13 +57,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 var content = '';
                 for(var r in data.result.data.filelist) {
                     var fileinfo=data.result.data.filelist[r]
-                    console.log(fileinfo);
+                    var yulan = '';
+                    if (fileinfo.isImage) {
+                        yulan = "<img src=\""+fileinfo.url+"\" height=\"120px\" width=\"120px\">";
+                    }
                     // var delurl = "<?=Url::to(['site/deletefile']);?>"+"?id="+fileinfo.id;
                     content += "<tr>"+
                     // "<td class=\"unnamed1\"><input type=\"checkbox\" name=\"ids[]\" value=\""+fileinfo.id+"\"></td>"+
                         "<td class=\"unnamed1\">"+fileinfo.dirname+"</td>"+
                         "<td class=\"unnamed1\">"+fileinfo.filename+"</td>"+
                         "<td class=\"unnamed1\">"+fileinfo.url+"</td>"+
+                        "<td class=\"unnamed1\">"+yulan+"</td>"+
                         // "<td class=\"unnamed1\">"+
                         //     "<a href=\""+delurl+"\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复');\">删除</a>"+
                         // "</td>"+

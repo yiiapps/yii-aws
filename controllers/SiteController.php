@@ -466,6 +466,7 @@ class SiteController extends Controller
                     'url' => $url,
                     'dirname' => $s3dir,
                     'filename' => $file,
+                    'isImage' => $this->checkExt($file),
                 ];
                 unlink($filename);
             }
