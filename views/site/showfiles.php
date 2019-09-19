@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-lg-5">
             <div class="case">
-                <div class="upload" action='<?=Url::to(['site/upload', 'dirname' => \Yii::$app->request->get('dirname', '')]);?>' id='case1'></div>
+                <div class="upload" data-type="png,jpg,jpeg,gif" action='<?=Url::to(['site/upload', 'dirname' => \Yii::$app->request->get('dirname', '')]);?>' id='case1'></div>
             </div>
         </div>
     </div>
@@ -56,15 +56,15 @@ $(function() {
     $("#case1").upload(
         function(_this, data) {
             console.log(data)
-        },
-        function(successData) {
-            console.log(successData);
         }
+        // function(successData) {
+        //     console.log(successData);
+        // }
     );
-    $.fn.upload = function(look_call_back,successCallback){
-        if (successCallback && typeof successCallback == 'function') {
-            successCallback(data.data[0], item);
-        }
-    }
+    // $.fn.upload = function(look_call_back,successCallback){
+    //     if (successCallback && typeof successCallback == 'function') {
+    //         successCallback(data.data[0], item);
+    //     }
+    // }
 })
 </script>
