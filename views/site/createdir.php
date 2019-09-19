@@ -71,6 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             $.get('<?=Url::to(['site/searchdir']);?>?searchkey='+$('#searchkey').val(),function(data){
                 var dirlistUrl="<?=Url::to(['site/index']);?>";
+                var uploadzipUrl="<?=Url::to(['site/zip']);?>";
                 var showfilesUrl = "<?=Url::to(['site/showfiles']);?>";
                 var deletedirUrl = "<?=Url::to(['site/deletedir']);?>";
                 for(var i in data.data){
@@ -79,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     var content = "<tr>"+
                         "<td class=\"unnamed1\">"+item.dirname+"</td>"+
                         "<td class=\"unnamed1\">"+
-                            "<a href=\""+dirlistUrl+"?dirname="+item.dirname+"\" target=\"_blank\">上传ZIP</a>&nbsp; "+
+                            "<a href=\""+uploadzipUrl+"?dirname="+item.dirname+"\" target=\"_blank\">上传ZIP</a>&nbsp; "+
                             "<a href=\""+dirlistUrl+"?dirname="+item.dirname+"\">查看子目录</a>&nbsp; "+
                             "<a href=\""+showfilesUrl+"?dirname="+item.dirname+"\" target=\"_blank\">查看文件</a>&nbsp; "+
                             "<a href=\""+deletedirUrl+"?id="+item.id+"\" onClick=\"return confirm('确定要删除吗? 删除后无法恢复, 且会删除所有子文件夹和文件夹下面的文件');\">删除</a>&nbsp; "+
