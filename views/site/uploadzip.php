@@ -7,7 +7,11 @@ use yii\helpers\Url;
 
 $this->title = '上传Zip';
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerJsFile('http://libs.baidu.com/jquery/1.10.2/jquery.min.js');
+$this->registerJsFile('@web/upload_h5/jQuery.upload.uploadzip.js');
+$this->registerJsFile('@web/js/site/zip.js');
 ?>
+
 <link rel="stylesheet" href="<?=Url::to('@web/upload_h5/upload.css');?>">
 <style type="text/css">
     <!--
@@ -34,14 +38,3 @@ $this->params['breadcrumbs'][] = $this->title;
     </table>
     </form>
 </div>
-<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
-<script type="text/javascript" src="<?=Url::to('@web/upload_h5/jQuery.upload.uploadzip.js');?>"></script>
-<script>
-$(function() {
-    $("#case1").upload(
-        function(_this, data) {
-            console.log(data)
-        }
-    );
-})
-</script>

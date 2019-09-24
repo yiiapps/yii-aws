@@ -1,11 +1,12 @@
 {
-    "name": "yiisoft/yii2-app-basic",
-    "description": "Yii 2 Basic Project Template",
+    "name": "yiisoft/yii2-app-basic-admin",
+    "description": "Yii 2 Basic Project Template with module admin",
     "keywords": [
         "yii2",
         "framework",
         "basic",
-        "project template"
+        "project template",
+        "admin"
     ],
     "homepage": "http://www.yiiframework.com/",
     "type": "project",
@@ -15,22 +16,24 @@
         "forum": "http://www.yiiframework.com/forum/",
         "wiki": "http://www.yiiframework.com/wiki/",
         "irc": "irc://irc.freenode.net/yii",
-        "source": "https://github.com/yiisoft/yii2"
+        "source": "https://github.com/yiiapps/yii2Basic"
     },
-    "minimum-stability": "stable",
     "require": {
         "php": ">=5.4.0",
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap": "~2.0.0",
+        "mdmsoft/yii2-admin": "~2.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
+        "dmstr/yii2-adminlte-asset": "^2.1",
+        "yiiapps/adminlte-asset-ext": "^0.1.190923",
         "frostealth/yii2-aws-s3": "~2.0"
     },
     "require-dev": {
-        "yiisoft/yii2-debug": "~2.1.0",
-        "yiisoft/yii2-gii": "~2.1.0",
+        "yiisoft/yii2-debug": "*",
+        "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "~2.0.0",
-        "codeception/base": "~2.3.0",
-        "codeception/verify": "~0.4.0",
+        "codeception/base": "*",
+        "codeception/verify": "*",
         "codeception/specify": "~0.4.6",
         "symfony/browser-kit": ">=2.7 <=4.2.4"
     },
@@ -40,13 +43,21 @@
             "enabled": false
         }
     },
+    "autoload": {
+        "psr-4": {
+            "yiiapps\\": "yiiapps"
+        }
+    },
     "scripts": {
-        "post-install-cmd": [
-            "yii\\composer\\Installer::postInstall"
-        ],
         "post-create-project-cmd": [
             "yii\\composer\\Installer::postCreateProject",
             "yii\\composer\\Installer::postInstall"
+        ],
+        "post-install-cmd": [
+            "yiiapps\\adminlte\\components\\ComposerInstaller::initProject"
+        ],
+        "post-update-cmd": [
+            "yiiapps\\adminlte\\components\\ComposerInstaller::initProject"
         ]
     },
     "extra": {

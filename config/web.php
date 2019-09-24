@@ -4,25 +4,41 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
+    'modules' => [
+        'admin' => [
+            'class' => 'yiiapps\adminlte\Module',
+            'layout' => 'main',
+            'menus' => [
+                // 'assignment' => [
+                //     'label' => 'Grant Access', // change label
+                // ],
+                // 'route' => null, // disable menu
+            ],
+            // 'mainLayout' => '@vendor/yiiapps/adminlte-asset-ext/views/layouts/main.php',
+        ],
+    ],
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
+        '@yiiapps/adminlte' => '@vendor/yiiapps/adminlte-asset-ext',
     ],
     'name' => '静态文件管理',
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'ImXHpEEuCP1hcA4X-XgWQ2zjgncydYOV',
+            'cookieValidationKey' => 'cookieValidationKeycookieValidationKeycookieValidationKey',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'identityClass' => 'mdm\admin\models\User',
+            'loginUrl' => ['admin/user/login'],
+            // 'identityClass' => 'app\models\User',
+            'enableAutoLogin' => false,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -44,10 +60,20 @@ $config = [
             ],
         ],
         'db' => $db,
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+            ],
+        ],
+        'view' => [
+            'theme' => [
+                'pathMap' => [
+                    '@app/views/adminlte' => '@vendor/yiiapps/adminlte-asset-ext/views',
+                ],
             ],
         ],
         's3' => [
@@ -62,11 +88,34 @@ $config = [
         ],
         'assetManager' => [
             'bundles' => [
-                'yii\web\JqueryAsset' => false,
+                // 'yii\web\JqueryAsset' => false,
+                'yii\web\JqueryAsset' => [
+                    'sourcePath' => null, // 一定不要发布该资源
+                    'js' => [
+                        'http://libs.baidu.com/jquery/1.10.2/jquery.min.js',
+                    ],
+                ],
             ],
         ],
     ],
     'params' => $params,
+    'as access' => [
+        'class' => 'mdm\admin\components\AccessControl',
+        'allowActions' => [
+            // 'site/*',
+            // 'gii/*',
+            // 'some-controller/some-action',
+            // The actions listed here will be allowed to everyone including guests.
+            // So, 'admin/*' should not appear here in the production, of course.
+            // But in the earlier stages of your development, you may probably want to
+            // add a lot of actions here until you finally completed setting up rbac,
+            // otherwise you may not even take a first step.
+        ],
+    ],
+    'language' => 'zh-CN',
+    'timeZone' => 'Asia/Shanghai',
+    'defaultRoute' => 'admin',
+    'layout' => '@vendor/yiiapps/adminlte-asset-ext/views/layouts/main.php',
 ];
 
 if (YII_ENV_DEV) {
