@@ -114,7 +114,7 @@ $config = [
     ],
     'language' => 'zh-CN',
     'timeZone' => 'Asia/Shanghai',
-    'defaultRoute' => 'admin',
+    'defaultRoute' => 'site/index',
     'layout' => '@vendor/yiiapps/adminlte-asset-ext/views/layouts/main.php',
 ];
 
